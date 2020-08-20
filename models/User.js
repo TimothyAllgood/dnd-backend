@@ -7,9 +7,9 @@ const userSchema = mongoose.Schema({
 	profileImg: String,
 	Bio: String,
 	city: String,
-	lat: Number,
-	lng: Number,
-	role: String,
+	lat: String,
+	lng: String,
+	roles: String,
 	games: [String],
 	friends: [],
 });
