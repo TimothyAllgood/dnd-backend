@@ -7,6 +7,18 @@ const userSchema = mongoose.Schema({
 	profileImg: String,
 	bio: String,
 	city: String,
+	location: {
+		type: {
+			type: String, // Don't do `{ location: { type: String } }`
+			enum: ['Point'], // 'location.type' must be 'Point'
+			required: true,
+		},
+		coordinates: {
+			type: [Number],
+			required: true,
+			default: [0, 0],
+		},
+	},
 	lat: String,
 	lng: String,
 	roles: String,

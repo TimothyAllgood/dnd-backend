@@ -26,6 +26,10 @@ const updateUser = async (req, res) => {
 		city: req.body.city,
 		lat: req.body.lat,
 		lng: req.body.lng,
+		location: {
+			type: 'Point',
+			coordinates: [parseFloat(req.body.lng), parseFloat(req.body.lat)],
+		},
 	};
 	try {
 		const updatedUser = await db.User.findByIdAndUpdate(req.params.id, params, {
@@ -64,8 +68,28 @@ const updateProfileImg = async (req, res) => {
 	}
 };
 
+const nearby = async (req, res) => {
+	const currentUser = await db.User.findById(req.params.id);
+
+	const nearby = await db.User.find({
+		location: {
+			$geoWithin: {
+				$centerSphere: [[currentUser.lng, currentUser.lat], 100 / 3963.2],
+			},
+		},
+	});
+	const nearbyUsers = [];
+	nearby.forEach((nearbyUser) => {
+		if (nearbyUser.username !== currentUser.username) {
+			nearbyUsers.push(nearbyUser);
+		}
+	});
+	res.json({ nearbyUsers });
+};
+
 module.exports = {
 	getOne,
 	updateUser,
 	updateProfileImg,
+	nearby,
 };

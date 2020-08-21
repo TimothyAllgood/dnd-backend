@@ -60,7 +60,6 @@ const register = async (req, res) => {
 
 // LOGIN CONTROLLER
 const login = async (req, res) => {
-	console.log(req.body);
 	try {
 		// FIND USER BY EMAIL (OR USERNAME)
 		const foundUser = await db.User.findOne({ username: req.body.username });
@@ -91,7 +90,7 @@ const login = async (req, res) => {
 		const token = await jwt.sign(payload, secret, expiration);
 
 		// SEND SUCCESS WITH TOKEN
-		res.status(200).json({ token });
+		res.status(200).json({ token, id: foundUser._id });
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
