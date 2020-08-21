@@ -2,10 +2,13 @@
 const router = require('express').Router();
 const ctrl = require('../controllers');
 
-// Current Path = '/api/v1/auth'
+const multer = require('../middleware/photo-config');
+
+// Current Path = '/api/v1/users'
 
 router.get('/:id', ctrl.user.getOne);
 router.post('/:id', ctrl.user.updateUser);
+router.post('/image/:id', multer, ctrl.user.updateProfileImg);
 
 // exports
 module.exports = router;

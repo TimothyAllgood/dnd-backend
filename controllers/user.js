@@ -1,9 +1,15 @@
 const db = require('../models');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+	cloud_name: process.env.CLOUD_NAME,
+	api_key: process.env.API_KEY,
+	api_secret: process.env.API_SECRET,
+});
 
 const getOne = async (req, res) => {
 	try {
 		const foundUser = await db.User.findById(req.params.id);
-		console.log(foundUser);
 		res.json({ foundUser });
 	} catch (error) {
 		console.log(error);
@@ -25,14 +31,41 @@ const updateUser = async (req, res) => {
 		const updatedUser = await db.User.findByIdAndUpdate(req.params.id, params, {
 			new: true,
 		});
-		console.log(updatedUser);
 		res.json({ updatedUser });
 	} catch (error) {
 		console.log(error);
 	}
 };
 
+const updateProfileImg = async (req, res) => {
+	// console.log(req.files);
+	const file = req.file; // uploaded image
+	let path = 'https://picsum.photos/150/150'; // default image
+	if (file) {
+		// if there is an uploaded image upload to cloudinary
+		console.log(file.path);
+		path = file.path;
+		params = {
+			profileImg: file.path,
+		};
+		db.User.findByIdAndUpdate(
+			req.params.id,
+			params,
+			{ new: true },
+			(err, updatedUser) => {
+				console.log(updatedUser);
+				res.json({ updatedUser });
+			}
+		);
+		cloudinary.uploader.upload(file.path, function (result) {});
+	} else {
+		const user = await db.User.findById(req.params.id);
+		res.json({ user });
+	}
+};
+
 module.exports = {
 	getOne,
 	updateUser,
+	updateProfileImg,
 };
