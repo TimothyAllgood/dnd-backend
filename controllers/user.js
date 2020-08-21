@@ -49,19 +49,27 @@ const updateProfileImg = async (req, res) => {
 		// if there is an uploaded image upload to cloudinary
 		console.log(file.path);
 		path = file.path;
-		params = {
-			profileImg: file.path,
-		};
-		db.User.findByIdAndUpdate(
-			req.params.id,
-			params,
-			{ new: true },
-			(err, updatedUser) => {
-				console.log(updatedUser);
-				res.json({ updatedUser });
+
+		cloudinary.uploader.upload(
+			file.path, // Eager transformation
+			{
+				eager: [{ width: 250, height: 250, crop: 'thumb', gravity: 'face' }],
+			},
+			function (result, error) {
+				params = {
+					profileImg: error.eager[0].url,
+				};
+
+				db.User.findByIdAndUpdate(
+					req.params.id,
+					params,
+					{ new: true },
+					(err, updatedUser) => {
+						res.json({ updatedUser });
+					}
+				);
 			}
 		);
-		cloudinary.uploader.upload(file.path, function (result) {});
 	} else {
 		const user = await db.User.findById(req.params.id);
 		res.json({ user });
@@ -87,9 +95,22 @@ const nearby = async (req, res) => {
 	res.json({ nearbyUsers });
 };
 
+const addFriend = async (req, res) => {
+	const currentUser = await db.User.findByIdAndUpdate(
+		req.params.id,
+		{
+			$push: { friends: req.body },
+		},
+		{ new: true }
+	);
+
+	res.json({ currentUser });
+};
+
 module.exports = {
 	getOne,
 	updateUser,
 	updateProfileImg,
 	nearby,
+	addFriend,
 };

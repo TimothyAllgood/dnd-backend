@@ -4,18 +4,20 @@ const userSchema = mongoose.Schema({
 	username: String,
 	email: String,
 	password: String,
-	profileImg: String,
+	profileImg: {
+		type: String,
+		default:
+			'https://cdna.artstation.com/p/assets/images/images/010/658/388/large/drakhas-oguzalp-donduren-goblin-face.jpg?1525547601',
+	},
 	bio: String,
 	city: String,
 	location: {
 		type: {
 			type: String, // Don't do `{ location: { type: String } }`
 			enum: ['Point'], // 'location.type' must be 'Point'
-			required: true,
 		},
 		coordinates: {
 			type: [Number],
-			required: true,
 			default: [0, 0],
 		},
 	},

@@ -6,14 +6,14 @@ const db = require('../models');
 const register = async (req, res) => {
 	// VALIDATE FIELD INPUT
 	if (!req.body.username || !req.body.email || !req.body.password) {
-		return res
+		res
 			.status(400)
 			.json({ message: 'All fields are required. Please try again' });
 	}
 
 	// VALIDATE PASSWORD LENGTH
 	if (req.body.password.length < 4) {
-		return res
+		res
 			.status(400)
 			.json({ message: 'Password must be at least 4 characters long' });
 	}
@@ -66,7 +66,7 @@ const login = async (req, res) => {
 		// const foundUser = await db.User.findOne({ username: req.body.username });
 
 		if (!foundUser) {
-			return res.status(400).json({
+			res.status(400).json({
 				status: 400,
 				message: 'Username or password is incorrect',
 			});
@@ -75,7 +75,7 @@ const login = async (req, res) => {
 		// CHECK IF PASSWORDS MATCH
 		const isMatch = await bcrypt.compare(req.body.password, foundUser.password);
 		if (!isMatch) {
-			return res.status(400).json({
+			res.status(400).json({
 				status: 400,
 				message: 'Username or password is incorrect',
 			});
