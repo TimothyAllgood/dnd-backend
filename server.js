@@ -1,8 +1,10 @@
 // Packages
 const express = require('express');
 const cors = require('cors');
-const jwt = require('jsonwebtoken');
 const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
 require('dotenv').config();
 
 const routes = require('./routes');
@@ -12,6 +14,7 @@ const PORT = process.env.PORT;
 
 app.use(
 	cors({
+		credentials: true,
 		origin: [`http://localhost:3000`],
 		methods: 'GET,POST,PUT,DELETE',
 		// credentials: true, // allows the session cookie to be sent back and forth from server to client
@@ -24,8 +27,22 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // Auth Routes
+app.get('/', (req, res) => {
+	res.send('hi').status(200);
+});
 app.use('/api/v1/auth', routes.auth);
 app.use('/api/v1/users', routes.user);
+app.use('/api/v1/message', routes.message);
+
+io.on('connection', function (socket) {
+	console.log(socket.id);
+	socket.on('SEND_MESSAGE', function (data) {
+		io.emit('RECEIVE_MESSAGE', data);
+	});
+});
 
 // Start Server
-app.listen(PORT, console.log('Server running on port ', PORT));
+http.listen(PORT, () => {
+	console.log('listening on *:3000');
+});
+module.exports.io = io;
