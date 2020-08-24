@@ -33,11 +33,21 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', routes.auth);
 app.use('/api/v1/users', routes.user);
 app.use('/api/v1/message', routes.message);
+let users = [];
+let socketIDs = {};
 
-io.on('connection', function (socket) {
-	console.log(socket.id);
+io.on('connection', async (socket) => {
+	// users.push(socket.id);
+	socket.on('join', function (room) {
+		users.push(room);
+		socketIDs[room] = socket.id;
+		console.log(socket.id);
+		io.emit('users', socketIDs);
+	});
 	socket.on('SEND_MESSAGE', function (data) {
-		io.emit('RECEIVE_MESSAGE', data);
+		console.log(`Data: ${data.to}, Socket ID: ${socket.id}`);
+
+		io.to(data.to).emit('RECEIVE_MESSAGE', data);
 	});
 });
 
