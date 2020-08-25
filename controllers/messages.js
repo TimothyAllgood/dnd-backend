@@ -2,8 +2,15 @@ const db = require('../models');
 
 const startConversation = async (req, res) => {
 	try {
+		const userOne = await db.User.findById(req.params.from);
+		const userTwo = await db.User.findById(req.params.to);
+
 		const params = {
-			participants: [req.params.from, req.params.to],
+			participants: {
+				users: { userOne: userOne, userTwo: userTwo },
+				ids: [req.params.from, req.params.to],
+			},
+
 			messages: [
 				{
 					message: 'Send the first message...',
@@ -24,7 +31,7 @@ const startConversation = async (req, res) => {
 const getMessages = async (req, res) => {
 	try {
 		const foundConversation = await db.Conversation.findOne({
-			participants: {
+			'participants.ids': {
 				$all: [req.params.userOne, req.params.userTwo],
 			},
 		});
@@ -37,10 +44,9 @@ const getMessages = async (req, res) => {
 const getConversations = async (req, res) => {
 	try {
 		const foundConversations = await db.Conversation.find({
-			participants: {
-				$in: req.params.userOne,
-			},
+			'participants.ids': { $in: [req.params.userOne] },
 		});
+
 		res.json({ foundConversations });
 	} catch (error) {
 		console.log(error);
@@ -60,7 +66,7 @@ const getConversationById = async (req, res) => {
 const addMessage = async (req, res) => {
 	try {
 		const foundConversation = await db.Conversation.findOne({
-			participants: {
+			'participants.ids': {
 				$all: [req.params.userOne, req.params.userTwo],
 			},
 		});
