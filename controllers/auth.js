@@ -68,7 +68,7 @@ const login = async (req, res) => {
 		if (!foundUser) {
 			res.status(400).json({
 				status: 400,
-				message: 'Username or password is incorrect',
+				message: 'Username is incorrect!',
 			});
 		}
 
@@ -77,7 +77,7 @@ const login = async (req, res) => {
 		if (!isMatch) {
 			res.status(400).json({
 				status: 400,
-				message: 'Username or password is incorrect',
+				message: 'Password is incorrect!',
 			});
 		}
 
