@@ -2,8 +2,8 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
 require('dotenv').config();
 
@@ -17,14 +17,26 @@ app.use(
 		credentials: true,
 		origin: [`http://localhost:3000`],
 		methods: 'GET,POST,PUT,DELETE',
-		// credentials: true, // allows the session cookie to be sent back and forth from server to client
-		optionsSuccessStatus: 200, // some legacy browsers choke on satus 204
+		optionsSuccessStatus: 200,
 	})
 );
 
 // Middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+io.sockets.on('connection', (socket) => {
+	socket.on('fromClient', (data) => {});
+
+	const room = socket.request.headers.referer.split('/').pop();
+
+	socket.join(room);
+
+	socket.on('SEND_MESSAGE', function (data) {
+		console.log('message sent');
+		io.to(data.to).to(data.from).emit('RECEIVE_MESSAGE', data);
+	});
+});
 
 // Auth Routes
 app.get('/', (req, res) => {
@@ -52,7 +64,4 @@ io.on('connection', async (socket) => {
 });
 
 // Start Server
-http.listen(PORT, () => {
-	console.log('listening on *:3000');
-});
-module.exports.io = io;
+server.listen(PORT, console.log('Server running on port ', PORT));
