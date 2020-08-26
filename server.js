@@ -32,10 +32,7 @@ app.get('/', (req, res) => {
 });
 app.use('/api/v1/auth', routes.auth);
 app.use('/api/v1/users', routes.user);
-<<<<<<< HEAD
 app.use('/api/v1/messages', routes.messages);
-=======
-app.use('/api/v1/message', routes.message);
 let users = [];
 let socketIDs = {};
 
@@ -53,7 +50,6 @@ io.on('connection', async (socket) => {
 		io.to(data.to).emit('RECEIVE_MESSAGE', data);
 	});
 });
->>>>>>> socket_io
 
 // Start Server
 http.listen(PORT, () => {
