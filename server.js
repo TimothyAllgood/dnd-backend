@@ -15,7 +15,6 @@ const PORT = process.env.PORT;
 app.use(
 	cors({
 		credentials: true,
-		origin: [`http://localhost:3000`, `http://dndgo.timotheusdesigns.com/`],
 		methods: 'GET,POST,PUT,DELETE',
 		optionsSuccessStatus: 200,
 	})
