@@ -9,7 +9,10 @@ const userSchema = mongoose.Schema({
 		default:
 			'https://cdna.artstation.com/p/assets/images/images/010/658/388/large/drakhas-oguzalp-donduren-goblin-face.jpg?1525547601',
 	},
-	bio: String,
+	bio: {
+		type: String,
+		default: 'Tell us a little about yourself, brave adventurer...',
+	},
 	city: String,
 	location: {
 		type: {
