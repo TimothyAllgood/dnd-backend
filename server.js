@@ -32,7 +32,7 @@ io.sockets.on('connection', (socket) => {
 	});
 
 	console.log(userIDS);
-	console.log(socket.request.headers);
+	console.log(userIDS.socket);
 	// socket.join(userIDS[socket.request.headers.cookie.split('io=').pop()]);
 
 	socket.on('SEND_MESSAGE', function (data) {
