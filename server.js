@@ -31,8 +31,6 @@ io.sockets.on('connection', (socket) => {
 		console.log(socket.id);
 	});
 
-	const room = socket.request.headers.referer.split('/').pop();
-	console.log(socket.request.headers.cookie.split('io=').pop());
 	console.log(userIDS);
 	socket.join(userIDS[socket.request.headers.cookie.split('io=').pop()]);
 
