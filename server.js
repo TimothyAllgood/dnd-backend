@@ -24,15 +24,21 @@ app.use(
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+let userIDS = {};
 io.sockets.on('connection', (socket) => {
-	socket.on('fromClient', (data) => {});
+	socket.on('fromClient', (data) => {
+		userIDS[socket.id] = data.user;
+		console.log(socket.id);
+	});
 
 	const room = socket.request.headers.referer.split('/').pop();
-
-	socket.join(room);
+	console.log(socket.request.headers.cookie.split('io=').pop());
+	console.log(userIDS);
+	socket.join(userIDS[socket.request.headers.cookie.split('io=').pop()]);
 
 	socket.on('SEND_MESSAGE', function (data) {
 		console.log('message sent');
+		console.log(socket.rooms);
 		io.to(data.from).emit('RECEIVE_MESSAGE_FROM', data);
 		io.to(data.to).emit('RECEIVE_MESSAGE', data);
 	});
