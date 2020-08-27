@@ -25,13 +25,24 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 let userIDS = {};
-io.sockets.on('connection', (socket) => {
-	socket.on('fromClient', (data) => {
-		userIDS[socket.request.headers['x-request-id']] = data.user;
-		socket.join(userIDS[socket.request.headers['x-request-id']]);
+
+io.sockets.on('connection', async (socket) => {
+	let ready = false;
+	const socketID = socket.id;
+	console.log('Initial: ', socketID);
+	const wait = new Promise((r, j) => {
+		socket.on('fromClient', async (data) => {
+			userIDS[socketID] = data.user;
+			r('fine');
+			console.log('During client emits:', socketID);
+		});
 	});
-	console.log(socket.request.headers['x-request-id']);
+
+	await wait;
+
 	console.log(userIDS);
+	console.log('After client emits:', socketID);
+	socket.join(userIDS[socketID]);
 
 	socket.on('SEND_MESSAGE', function (data) {
 		console.log('message sent');
