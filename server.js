@@ -30,6 +30,7 @@ io.sockets.on('connection', (socket) => {
 		userIDS[socket.request.headers['x-request-id']] = data.user;
 	});
 	console.log(socket.request.headers['x-request-id']);
+	console.log(userIDS);
 	socket.join(userIDS[socket.request.headers['x-request-id']]);
 
 	socket.on('SEND_MESSAGE', function (data) {
