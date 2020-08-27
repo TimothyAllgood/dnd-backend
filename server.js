@@ -27,13 +27,10 @@ app.use(express.json());
 let userIDS = {};
 io.sockets.on('connection', (socket) => {
 	socket.on('fromClient', (data) => {
-		userIDS[socket.id] = data.user;
-		console.log(socket.id);
+		userIDS[socket.request.headers['x-request-id']] = data.user;
 	});
 
-	console.log(userIDS);
-	console.log(userIDS.socket);
-	// socket.join(userIDS[socket.request.headers.cookie.split('io=').pop()]);
+	socket.join(userIDS[socket.request.headers['x-request-id']]);
 
 	socket.on('SEND_MESSAGE', function (data) {
 		console.log('message sent');
