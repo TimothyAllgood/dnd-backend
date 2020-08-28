@@ -27,28 +27,19 @@ app.use(express.json());
 let userIDS = {};
 
 io.sockets.on('connection', async (socket) => {
-	let ready = false;
 	const socketID = socket.id;
-	console.log('Initial: ', socketID);
 	const wait = new Promise((r, j) => {
 		socket.on('fromClient', async (data) => {
 			userIDS[socketID] = data.user;
 			r('fine');
-			console.log('During client emits:', socketID);
 		});
 	});
 
 	await wait;
-
-	console.log(userIDS);
-	console.log('After client emits:', socketID);
 	socket.join(userIDS[socketID]);
 
 	socket.on('SEND_MESSAGE', function (data) {
-		console.log('message sent');
-		console.log(socket.rooms);
-		io.to(data.from).emit('RECEIVE_MESSAGE_FROM', data);
-		io.to(data.to).emit('RECEIVE_MESSAGE', data);
+		io.to(data.to).to(data.from).emit('RECEIVE_MESSAGE', data);
 	});
 });
 
