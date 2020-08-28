@@ -39,7 +39,7 @@ io.sockets.on('connection', async (socket) => {
 	socket.join(userIDS[socketID]);
 
 	socket.on('SEND_MESSAGE', function (data) {
-		io.to(data.to).emit('RECEIVE_MESSAGE', data);
+		io.to(data.to).to(data.from).emit('RECEIVE_MESSAGE', data);
 	});
 });
 
