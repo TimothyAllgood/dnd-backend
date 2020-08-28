@@ -11,6 +11,7 @@ router.get('/nearby/:id', ctrl.user.nearby);
 router.post('/:id', ctrl.user.updateUser);
 router.post('/image/:id', multer, ctrl.user.updateProfileImg);
 router.post('/addfriend/:id', ctrl.user.addFriend);
+router.delete('/:id', ctrl.user.deleteUser);
 
 // exports
 module.exports = router;

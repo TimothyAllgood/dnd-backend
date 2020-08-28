@@ -107,10 +107,20 @@ const addFriend = async (req, res) => {
 	res.json({ currentUser });
 };
 
+const deleteUser = async (req, res) => {
+	const deletedUser = await db.User.findByIdAndDelete(req.params.id);
+	const deletedConversations = db.Conversation.deleteMany({
+		'participants.ids': { $in: [deletedUser._id] },
+	});
+
+	res.status(200).json(deletedConversations, deletedUser);
+};
+
 module.exports = {
 	getOne,
 	updateUser,
 	updateProfileImg,
 	nearby,
 	addFriend,
+	deleteUser,
 };
